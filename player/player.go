@@ -21,7 +21,7 @@ type Controller interface {
 	SelectPlayerToRedraw(self, opponent *Player) *Player
 
 	// Chancellor
-	SelectCardToKeep(cards ...card.Card) (card.Card, []card.Card)
+	SelectCardToKeep(card1, card2, card3 card.Card) (card.Card, []card.Card)
 }
 
 type Player struct {
