@@ -30,6 +30,7 @@ var cardToStringMap = map[Card]string{
 	King:       "King",
 	Countess:   "Countess",
 	Princess:   "Princess",
+	-1:         "[OUT]",
 }
 
 func (c Card) String() string {

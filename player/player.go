@@ -132,7 +132,11 @@ func (p *Player) playCard(c card.Card, opponent *Player, deck *deck.Deck) {
 	case card.Prince:
 		playerToDiscard := p.controller.SelectPlayerToRedraw(p, opponent)
 		if playerToDiscard == p || !playerToDiscard.IsProtected() {
+			before := playerToDiscard.hand
 			playerToDiscard.redrawHand(deck)
+			fmt.Println("PRINCE", before, "->", playerToDiscard.hand)
+		} else {
+			fmt.Println("PRINCE", "PROTECTED")
 		}
 	case card.Chancellor:
 		var returnCards []card.Card
@@ -140,6 +144,7 @@ func (p *Player) playCard(c card.Card, opponent *Player, deck *deck.Deck) {
 		deck.Append(returnCards)
 	case card.King:
 		// TODO: select player to trade with
+		fmt.Println("KING", p.hand, "<->", opponent.hand)
 		p.trade(opponent)
 	case card.Countess:
 	case card.Princess:
