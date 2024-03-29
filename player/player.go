@@ -85,6 +85,7 @@ func (p *Player) redrawHand(deck *deck.Deck) {
 		return
 	}
 
+	// TODO: handle empty deck
 	p.hand = deck.Draw()
 }
 
@@ -101,53 +102,8 @@ func (p *Player) playCard(c card.Card, opponent *Player, deck *deck.Deck) {
 		return
 	}
 
-	switch c {
-	case card.Spy:
-	case card.Guard:
-		// TODO: select player to guess on
-
-		guess := p.controller.GuessCard()
-		if opponent.Hand() == guess {
-			fmt.Println("GUARD", "CORRECT", opponent.Hand())
-			opponent.discardHand()
-		} else {
-			fmt.Println("GUARD", "INCORRECT", guess, "ACTUAL", opponent.Hand())
-		}
-	case card.Priest:
-		fmt.Println("PRIEST", opponent.Hand())
-	case card.Baron:
-		// TODO: select player to compare with
-
-		switch c.Compare(opponent.Hand()) {
-		case 1:
-			fmt.Println("BARON", c, "BEATS", opponent.Hand())
-			opponent.discardHand()
-		case -1:
-			fmt.Println("BARON", c, "LOSES", opponent.Hand())
-			p.discardHand()
-		default:
-			fmt.Println("BARON", c, "EQUALS", opponent.Hand())
-		}
-	case card.Handmaid:
-	case card.Prince:
-		playerToDiscard := p.controller.SelectPlayerToRedraw(p, opponent)
-		if playerToDiscard == p || !playerToDiscard.IsProtected() {
-			before := playerToDiscard.hand
-			playerToDiscard.redrawHand(deck)
-			fmt.Println("PRINCE", before, "->", playerToDiscard.hand)
-		} else {
-			fmt.Println("PRINCE", "PROTECTED")
-		}
-	case card.Chancellor:
-		var returnCards []card.Card
-		p.hand, returnCards = p.controller.SelectCardToKeep(p.hand, deck.Draw(), deck.Draw())
-		deck.Append(returnCards)
-	case card.King:
-		// TODO: select player to trade with
-		fmt.Println("KING", p.hand, "<->", opponent.hand)
-		p.trade(opponent)
-	case card.Countess:
-	case card.Princess:
-		p.discardHand()
+	actionFunc := cardActions[c]
+	if actionFunc != nil {
+		actionFunc(p, opponent, deck)
 	}
 }
