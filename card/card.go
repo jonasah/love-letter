@@ -2,6 +2,7 @@ package card
 
 import (
 	"cmp"
+	"fmt"
 )
 
 type Card int
@@ -30,11 +31,14 @@ var cardToStringMap = map[Card]string{
 	King:       "King",
 	Countess:   "Countess",
 	Princess:   "Princess",
-	-1:         "[OUT]",
 }
 
 func (c Card) String() string {
-	return cardToStringMap[c]
+	if c == -1 {
+		return "[OUT]"
+	}
+
+	return fmt.Sprintf("%s (%d)", cardToStringMap[c], c)
 }
 
 func (c Card) Compare(other Card) int {
