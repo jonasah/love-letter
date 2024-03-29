@@ -74,6 +74,8 @@ func playChancellor(self, opponent *Player, deck *deck.Deck) {
 	var returnCards []card.Card
 	self.hand, returnCards = self.controller.SelectCardToKeep(self.hand, drawnCards...)
 	deck.Append(returnCards)
+
+	fmt.Println("CHANCELLOR", self.hand, returnCards)
 }
 
 func playKing(self, opponent *Player, deck *deck.Deck) {

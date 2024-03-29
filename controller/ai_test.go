@@ -122,3 +122,7 @@ func (m *MockRandomizer) Card() card.Card {
 	m.c = m.c[1:]
 	return c
 }
+
+func (m *MockRandomizer) Shuffle(cards []card.Card) {
+	panic("unimplemented")
+}

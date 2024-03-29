@@ -8,6 +8,7 @@ import (
 type Randomizer interface {
 	Bool() bool
 	Card() card.Card
+	Shuffle(cards []card.Card)
 }
 
 type ai struct {
@@ -66,11 +67,10 @@ func (a ai) SelectPlayerToRedraw(self, opponent *player.Player) *player.Player {
 }
 
 func (a ai) SelectCardToKeep(card1 card.Card, rest ...card.Card) (card.Card, []card.Card) {
-	// TODO: random
-	// idxToKeep := 0 //rand.Intn(len(cards))
-	// return cards[idxToKeep], cards[1:]
+	cards := append([]card.Card{card1}, rest...)
+	a.randomizer.Shuffle(cards)
 
-	return card1, rest
+	return cards[0], cards[1:]
 }
 
 func sort(c1, c2 card.Card) (card.Card, card.Card) {
