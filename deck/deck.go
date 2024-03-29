@@ -38,13 +38,14 @@ func (d *Deck) Append(cards []card.Card) {
 }
 
 var cardCount = map[card.Card]int{
-	card.Spy:      2,
-	card.Guard:    6,
-	card.Priest:   2,
-	card.Baron:    2,
-	card.Handmaid: 2,
-	card.Prince:   2,
-	card.King:     1,
-	card.Countess: 1,
-	card.Princess: 1,
+	card.Spy:        2,
+	card.Guard:      6,
+	card.Priest:     2,
+	card.Baron:      2,
+	card.Handmaid:   2,
+	card.Prince:     2,
+	card.Chancellor: 2,
+	card.King:       1,
+	card.Countess:   1,
+	card.Princess:   1,
 }

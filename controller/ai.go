@@ -65,12 +65,12 @@ func (a ai) SelectPlayerToRedraw(self, opponent *player.Player) *player.Player {
 	return self
 }
 
-func (a ai) SelectCardToKeep(card1, card2, card3 card.Card) (card.Card, []card.Card) {
+func (a ai) SelectCardToKeep(card1 card.Card, rest ...card.Card) (card.Card, []card.Card) {
 	// TODO: random
 	// idxToKeep := 0 //rand.Intn(len(cards))
 	// return cards[idxToKeep], cards[1:]
 
-	return card1, []card.Card{card2, card3}
+	return card1, rest
 }
 
 func sort(c1, c2 card.Card) (card.Card, card.Card) {

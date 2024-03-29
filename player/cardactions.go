@@ -64,9 +64,15 @@ func playPrince(self, opponent *Player, deck *deck.Deck) {
 }
 
 func playChancellor(self, opponent *Player, deck *deck.Deck) {
-	// TODO: handle empty deck
+	var drawnCards []card.Card
+	for range 2 {
+		if !deck.Empty() {
+			drawnCards = append(drawnCards, deck.Draw())
+		}
+	}
+
 	var returnCards []card.Card
-	self.hand, returnCards = self.controller.SelectCardToKeep(self.hand, deck.Draw(), deck.Draw())
+	self.hand, returnCards = self.controller.SelectCardToKeep(self.hand, drawnCards...)
 	deck.Append(returnCards)
 }
 

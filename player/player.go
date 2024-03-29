@@ -21,7 +21,7 @@ type Controller interface {
 	SelectPlayerToRedraw(self, opponent *Player) *Player
 
 	// Chancellor
-	SelectCardToKeep(card1, card2, card3 card.Card) (card.Card, []card.Card)
+	SelectCardToKeep(card1 card.Card, rest ...card.Card) (card.Card, []card.Card)
 }
 
 type Player struct {
@@ -85,8 +85,9 @@ func (p *Player) redrawHand(deck *deck.Deck) {
 		return
 	}
 
-	// TODO: handle empty deck
-	p.hand = deck.Draw()
+	if !deck.Empty() {
+		p.hand = deck.Draw()
+	}
 }
 
 func (p *Player) trade(opponent *Player) {
