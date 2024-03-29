@@ -14,7 +14,7 @@ func main() {
 	// TODO: more players
 	var players []*player.Player
 	for i := range 2 {
-		p := player.New(fmt.Sprintf("Player%d", i+1), controller.NewRandom(randomizer.NewMathRand()))
+		p := player.New(fmt.Sprintf("Player%d", i+1), controller.NewAI(randomizer.NewMathRand()))
 		players = append(players, p)
 	}
 

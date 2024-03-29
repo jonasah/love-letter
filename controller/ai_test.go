@@ -7,7 +7,7 @@ import (
 	"github.com/jonasah/love-letter/controller"
 )
 
-func TestRandomController_SelectCardToPlay(t *testing.T) {
+func TestAI_SelectCardToPlay(t *testing.T) {
 	tests := []struct {
 		name               string
 		playCard1          bool
@@ -86,9 +86,9 @@ func TestRandomController_SelectCardToPlay(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		controller := controller.NewRandom(&MockRandomizer{b: tc.playCard1})
+		ai := controller.NewAI(&MockRandomizer{b: tc.playCard1})
 
-		cardToPlay, cardToKeep := controller.SelectCardToPlay(tc.card1, tc.card2)
+		cardToPlay, cardToKeep := ai.SelectCardToPlay(tc.card1, tc.card2)
 		if cardToPlay != tc.expectedCardToPlay {
 			t.Errorf("%s: expected %v to be played, got %v", tc.name, tc.expectedCardToPlay, cardToPlay)
 		}
@@ -98,11 +98,11 @@ func TestRandomController_SelectCardToPlay(t *testing.T) {
 	}
 }
 
-func TestRandomController_GuessCard(t *testing.T) {
+func TestAI_GuessCard(t *testing.T) {
 	expectedGuess := card.Baron
-	controller := controller.NewRandom(&MockRandomizer{c: []card.Card{card.Guard, card.Guard, expectedGuess}})
+	ai := controller.NewAI(&MockRandomizer{c: []card.Card{card.Guard, card.Guard, expectedGuess}})
 
-	guess := controller.GuessCard()
+	guess := ai.GuessCard()
 	if guess != expectedGuess {
 		t.Errorf("expected guess to be %v, got %v", expectedGuess, guess)
 	}

@@ -10,17 +10,17 @@ type Randomizer interface {
 	Card() card.Card
 }
 
-type random struct {
+type ai struct {
 	randomizer Randomizer
 }
 
-var _ = player.Controller(random{})
+var _ = player.Controller(ai{})
 
-func NewRandom(randomizer Randomizer) random {
-	return random{randomizer}
+func NewAI(randomizer Randomizer) ai {
+	return ai{randomizer}
 }
 
-func (r random) SelectCardToPlay(card1, card2 card.Card) (card.Card, card.Card) {
+func (a ai) SelectCardToPlay(card1, card2 card.Card) (card.Card, card.Card) {
 	low, high := sort(card1, card2)
 
 	// never play princess
@@ -33,39 +33,39 @@ func (r random) SelectCardToPlay(card1, card2 card.Card) (card.Card, card.Card) 
 		return high, low
 	}
 
-	if r.randomizer.Bool() {
+	if a.randomizer.Bool() {
 		return card1, card2
 	}
 
 	return card2, card1
 }
 
-func (r random) GuessCard() card.Card {
-	guess := r.randomizer.Card()
+func (a ai) GuessCard() card.Card {
+	guess := a.randomizer.Card()
 	for guess == card.Guard {
-		guess = r.randomizer.Card()
+		guess = a.randomizer.Card()
 	}
 
 	return guess
 }
 
-func (r random) SelectPlayer(card card.Card, opponent *player.Player) *player.Player {
+func (a ai) SelectPlayer(card card.Card, opponent *player.Player) *player.Player {
 	return opponent
 }
 
-func (r random) SelectPlayerToRedraw(self, opponent *player.Player) *player.Player {
+func (a ai) SelectPlayerToRedraw(self, opponent *player.Player) *player.Player {
 	if opponent.IsProtected() {
 		return self
 	}
 
-	if r.randomizer.Bool() {
+	if a.randomizer.Bool() {
 		return opponent
 	}
 
 	return self
 }
 
-func (r random) SelectCardToKeep(card1, card2, card3 card.Card) (card.Card, []card.Card) {
+func (a ai) SelectCardToKeep(card1, card2, card3 card.Card) (card.Card, []card.Card) {
 	// TODO: random
 	// idxToKeep := 0 //rand.Intn(len(cards))
 	// return cards[idxToKeep], cards[1:]
