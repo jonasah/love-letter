@@ -11,21 +11,25 @@ import (
 )
 
 func main() {
-	// TODO: more players
+	rnd := randomizer.NewMathRand()
+
+	numPlayers := rnd.IntIncl(2, 6)
 	var players []*player.Player
-	for i := range 2 {
-		p := player.New(fmt.Sprintf("Player%d", i+1), controller.NewAI(randomizer.NewMathRand()))
+	for i := range numPlayers {
+		p := player.New(fmt.Sprintf("Player%d", i+1), controller.NewAI(rnd))
 		players = append(players, p)
 	}
 
-	winningPoints := 5
+	tokensToWin := map[int]int{2: 6, 3: 5, 4: 4, 5: 3, 6: 3}[numPlayers]
 
 	for {
 		playRound(players)
 
-		fmt.Println(players[0], players[1])
+		for _, p := range players {
+			fmt.Println(p)
+		}
 
-		winnerIdx := slices.IndexFunc(players, func(p *player.Player) bool { return p.Points >= winningPoints })
+		winnerIdx := slices.IndexFunc(players, func(p *player.Player) bool { return p.Tokens >= tokensToWin })
 		if winnerIdx != -1 {
 			fmt.Println("WINNER", players[winnerIdx])
 			break
@@ -46,10 +50,10 @@ func playRound(players []*player.Player) {
 		p.Deal(deck.Draw())
 	}
 
-	// var out []player.Player
+	// TODO: winner of last round begins
 
 	for !deck.Empty() && len(players) > 1 {
-		players[0].Play(players[1], deck)
+		players[0].Play(players[1:], deck)
 
 		players = append(players[1:], players[0])
 		players = slices.DeleteFunc(players, func(p *player.Player) bool { return p.IsOut() })
@@ -59,37 +63,36 @@ func playRound(players []*player.Player) {
 
 	if len(players) == 1 {
 		fmt.Println("LAST MAN STANDING", *players[0])
-		players[0].Points++
+		players[0].Tokens++
 		if players[0].PlayedSpy() {
 			fmt.Println("EXTRA POINT SPY")
-			players[0].Points++
+			players[0].Tokens++
 		}
 		return
 	}
 
-	p1Card := players[0].Hand()
-	p2Card := players[1].Hand()
-	if p1Card > p2Card {
-		fmt.Println("WIN", players[0].Name, p1Card, ">", p2Card)
-		players[0].Points++
-	} else if p1Card < p2Card {
-		fmt.Println("WIN", players[1].Name, p2Card, ">", p1Card)
-		players[1].Points++
-	} else {
-		fmt.Println("TIE", p1Card, "==", p2Card)
-		players[0].Points++
-		players[1].Points++
+	slices.SortFunc(players, func(a, b *player.Player) int { return -a.Hand().Compare(b.Hand()) })
+
+	if players[0].Hand() > players[1].Hand() {
+		fmt.Println("WIN", players[0].Name, players[0].Hand(), ">", players[1].Hand(), players[1].Name)
+		players[0].Tokens++
+	} else if players[0].Hand() == players[1].Hand() {
+		fmt.Println("TIE", players[0].Name, players[0].Hand(), "==", players[1].Hand(), players[1].Name)
+		players[0].Tokens++
+		players[1].Tokens++
 	}
 
-	p1Spy := players[0].PlayedSpy()
-	p2Spy := players[1].PlayedSpy()
-	if p1Spy == p2Spy {
-		fmt.Println("NO POINT FOR SPY", p1Spy, p2Spy)
-	} else if p1Spy {
-		fmt.Println("SPY", players[0].Name)
-		players[0].Points++
+	var playersWithSpy []*player.Player
+	for _, p := range players {
+		if p.PlayedSpy() {
+			playersWithSpy = append(playersWithSpy, p)
+		}
+	}
+
+	if len(playersWithSpy) == 1 {
+		fmt.Println("SPY", playersWithSpy[0].Name)
+		playersWithSpy[0].Tokens++
 	} else {
-		fmt.Println("SPY", players[1].Name)
-		players[1].Points++
+		fmt.Println("NO POINT FOR SPY", len(playersWithSpy))
 	}
 }

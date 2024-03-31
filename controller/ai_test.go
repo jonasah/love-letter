@@ -5,6 +5,7 @@ import (
 
 	"github.com/jonasah/love-letter/card"
 	"github.com/jonasah/love-letter/controller"
+	"github.com/jonasah/love-letter/player"
 )
 
 func TestAI_SelectCardToPlay(t *testing.T) {
@@ -102,7 +103,7 @@ func TestAI_GuessCard(t *testing.T) {
 	expectedGuess := card.Baron
 	ai := controller.NewAI(&MockRandomizer{c: []card.Card{card.Guard, card.Guard, expectedGuess}})
 
-	guess := ai.GuessCard()
+	_, guess := ai.GuessCard([]*player.Player{nil})
 	if guess != expectedGuess {
 		t.Errorf("expected guess to be %v, got %v", expectedGuess, guess)
 	}
@@ -110,11 +111,16 @@ func TestAI_GuessCard(t *testing.T) {
 
 type MockRandomizer struct {
 	b bool
+	n int
 	c []card.Card
 }
 
 func (m *MockRandomizer) Bool() bool {
 	return m.b
+}
+
+func (m *MockRandomizer) Intn(n int) int {
+	return m.n
 }
 
 func (m *MockRandomizer) Card() card.Card {

@@ -7,6 +7,8 @@ import (
 
 type Randomizer interface {
 	Bool() bool
+	Intn(n int) int
+
 	Card() card.Card
 	Shuffle(cards []card.Card)
 }
@@ -41,20 +43,28 @@ func (a ai) SelectCardToPlay(card1, card2 card.Card) (card.Card, card.Card) {
 	return card2, card1
 }
 
-func (a ai) GuessCard() card.Card {
+func (a ai) GuessCard(opponents []*player.Player) (*player.Player, card.Card) {
+	// TODO: do not guess on protected opponent
+	opponent := opponents[a.randomizer.Intn(len(opponents))]
+
 	guess := a.randomizer.Card()
 	for guess == card.Guard {
 		guess = a.randomizer.Card()
 	}
 
-	return guess
+	return opponent, guess
 }
 
-func (a ai) SelectPlayer(card card.Card, opponent *player.Player) *player.Player {
+func (a ai) SelectPlayer(card card.Card, opponents []*player.Player) *player.Player {
+	// TODO: do not guess on protected opponent
+	opponent := opponents[a.randomizer.Intn(len(opponents))]
 	return opponent
 }
 
-func (a ai) SelectPlayerToRedraw(self, opponent *player.Player) *player.Player {
+func (a ai) SelectPlayerToRedraw(self *player.Player, opponents []*player.Player) *player.Player {
+	// TODO: do not guess on protected opponent
+	opponent := opponents[a.randomizer.Intn(len(opponents))]
+
 	if opponent.IsProtected() {
 		return self
 	}

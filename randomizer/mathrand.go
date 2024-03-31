@@ -19,6 +19,14 @@ func (m mathRand) Bool() bool {
 	return rand.Intn(2) == 0
 }
 
+func (m mathRand) Intn(n int) int {
+	return rand.Intn(n)
+}
+
+func (m mathRand) IntIncl(a, b int) int {
+	return m.Intn(b-a+1) + a
+}
+
 func (m mathRand) Card() card.Card {
 	return card.Card(rand.Intn(int(card.Princess) + 1))
 }

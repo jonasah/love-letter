@@ -12,13 +12,13 @@ type Controller interface {
 	SelectCardToPlay(card1, card2 card.Card) (card.Card, card.Card)
 
 	// Guard
-	GuessCard() card.Card
+	GuessCard(opponents []*Player) (*Player, card.Card)
 
 	// Priest, Baron, King
-	SelectPlayer(card card.Card, opponent *Player) *Player
+	SelectPlayer(card card.Card, opponents []*Player) *Player
 
 	// Prince
-	SelectPlayerToRedraw(self, opponent *Player) *Player
+	SelectPlayerToRedraw(self *Player, opponents []*Player) *Player
 
 	// Chancellor
 	SelectCardToKeep(card1 card.Card, rest ...card.Card) (card.Card, []card.Card)
@@ -26,7 +26,7 @@ type Controller interface {
 
 type Player struct {
 	Name   string
-	Points int
+	Tokens int
 
 	controller Controller
 
@@ -43,13 +43,17 @@ func (p *Player) Deal(hand card.Card) {
 	p.pile = nil
 }
 
-func (p *Player) Play(opponent *Player, deck *deck.Deck) {
+func (p *Player) Play(opponents []*Player, deck *deck.Deck) {
 	var cardToPlay card.Card
 	cardToPlay, p.hand = p.controller.SelectCardToPlay(p.hand, deck.Draw())
 
 	p.pile = append(p.pile, cardToPlay)
 
-	p.playCard(cardToPlay, opponent, deck)
+	fmt.Println(p.Name, "PLAYING", cardToPlay, "HAND", p.hand)
+	actionFunc := cardActions[cardToPlay]
+	if actionFunc != nil {
+		actionFunc(p, opponents, deck)
+	}
 }
 
 func (p *Player) Hand() card.Card {
@@ -92,19 +96,4 @@ func (p *Player) redrawHand(deck *deck.Deck) {
 
 func (p *Player) trade(opponent *Player) {
 	p.hand, opponent.hand = opponent.hand, p.hand
-}
-
-func (p *Player) playCard(c card.Card, opponent *Player, deck *deck.Deck) {
-	fmt.Println(p.Name, "PLAYING", c, "HAND", p.hand)
-
-	cannotPlayIfProtected := []card.Card{card.Guard, card.Priest, card.Baron, card.King}
-	if opponent.IsProtected() && slices.Contains(cannotPlayIfProtected, c) {
-		fmt.Println("PROTECTED", c)
-		return
-	}
-
-	actionFunc := cardActions[c]
-	if actionFunc != nil {
-		actionFunc(p, opponent, deck)
-	}
 }
