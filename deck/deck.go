@@ -4,17 +4,23 @@ import (
 	"github.com/jonasah/love-letter/card"
 )
 
+type Shuffler interface {
+	Shuffle(cards []card.Card)
+}
+
 type Deck struct {
 	cards []card.Card
 }
 
-func New() *Deck {
+func New(shuffler Shuffler) *Deck {
 	var cards []card.Card
 	for card, count := range cardCount {
 		for range count {
 			cards = append(cards, card)
 		}
 	}
+
+	shuffler.Shuffle(cards)
 
 	return &Deck{cards}
 }
@@ -27,10 +33,6 @@ func (d *Deck) Draw() card.Card {
 	card := d.cards[0]
 	d.cards = d.cards[1:]
 	return card
-}
-
-func (d *Deck) Shuffle() {
-	// TODO: rand.Shuffle()
 }
 
 func (d *Deck) Append(cards []card.Card) {

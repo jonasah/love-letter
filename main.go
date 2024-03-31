@@ -23,7 +23,7 @@ func main() {
 	tokensToWin := map[int]int{2: 6, 3: 5, 4: 4, 5: 3, 6: 3}[numPlayers]
 
 	for {
-		playRound(players)
+		playRound(players, rnd)
 
 		for _, p := range players {
 			fmt.Println(p)
@@ -37,11 +37,10 @@ func main() {
 	}
 }
 
-func playRound(players []*player.Player) {
+func playRound(players []*player.Player, shuffler deck.Shuffler) {
 	fmt.Println("==== NEW ROUND ====")
 
-	deck := deck.New()
-	deck.Shuffle()
+	deck := deck.New(shuffler)
 	removedCard := deck.Draw()
 
 	fmt.Println(*deck)
