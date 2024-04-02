@@ -23,7 +23,7 @@ func main() {
 	tokensToWin := map[int]int{2: 6, 3: 5, 4: 4, 5: 3, 6: 3}[numPlayers]
 
 	for {
-		playRound(players, rnd)
+		playRound(slices.Clone(players), rnd)
 
 		for _, p := range players {
 			fmt.Println(p)
