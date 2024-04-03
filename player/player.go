@@ -50,9 +50,9 @@ func (p *Player) Play(opponents []*Player, deck *deck.Deck) {
 	p.pile = append(p.pile, cardToPlay)
 
 	log.Printf("Plays %s", cardToPlay)
-	actionFunc := cardActions[cardToPlay]
-	if actionFunc != nil {
-		actionFunc(p, opponents, deck)
+	effectFunc := cardEffects[cardToPlay]
+	if effectFunc != nil {
+		effectFunc(p, opponents, deck)
 	}
 }
 

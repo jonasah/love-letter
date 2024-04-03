@@ -7,9 +7,9 @@ import (
 	"github.com/jonasah/love-letter/deck"
 )
 
-type cardActionFn = func(self *Player, opponents []*Player, deck *deck.Deck)
+type cardEffectFn = func(self *Player, opponents []*Player, deck *deck.Deck)
 
-var cardActions = map[card.Card]cardActionFn{
+var cardEffects = map[card.Card]cardEffectFn{
 	card.Guard:      playGuard,
 	card.Priest:     playPriest,
 	card.Baron:      playBaron,
