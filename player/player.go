@@ -17,6 +17,9 @@ type Controller interface {
 	// Priest, Baron, King
 	SelectPlayer(card card.Card, opponents []*Player) *Player
 
+	// Priest
+	LookAt(card card.Card)
+
 	// Prince
 	SelectPlayerToRedraw(self *Player, opponents []*Player) *Player
 

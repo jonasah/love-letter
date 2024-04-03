@@ -61,6 +61,8 @@ func (a ai) SelectPlayer(card card.Card, opponents []*player.Player) *player.Pla
 	return opponent
 }
 
+func (a ai) LookAt(card card.Card) {}
+
 func (a ai) SelectPlayerToRedraw(self *player.Player, opponents []*player.Player) *player.Player {
 	// TODO: do not guess on protected opponent
 	opponent := opponents[a.randomizer.Intn(len(opponents))]

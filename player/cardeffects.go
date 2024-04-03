@@ -44,7 +44,8 @@ func playPriest(self *Player, opponents []*Player, deck *deck.Deck) {
 		return
 	}
 
-	log.Printf("> %s holds %s", opponent.Name, opponent.Hand())
+	log.Printf("> Looks at %s's hand", opponent.Name)
+	self.controller.LookAt(opponent.Hand())
 }
 
 func playBaron(self *Player, opponents []*Player, deck *deck.Deck) {
