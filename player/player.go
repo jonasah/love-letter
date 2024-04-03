@@ -85,7 +85,3 @@ func (p *Player) discardHand() card.Card {
 	p.pile = append(p.pile, discardedCard)
 	return discardedCard
 }
-
-func (p *Player) trade(opponent *Player) {
-	p.hand, opponent.hand = opponent.hand, p.hand
-}

@@ -111,7 +111,7 @@ func playKing(self *Player, opponents []*Player, deck *deck.Deck) {
 	}
 
 	log.Printf("> Trades with %s", opponent.Name)
-	self.trade(opponent)
+	self.hand, opponent.hand = opponent.hand, self.hand
 }
 
 func playPrincess(self *Player, opponents []*Player, deck *deck.Deck) {
