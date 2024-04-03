@@ -86,17 +86,6 @@ func (p *Player) discardHand() card.Card {
 	return discardedCard
 }
 
-func (p *Player) redrawHand(deck *deck.Deck) {
-	discardedCard := p.discardHand()
-	if discardedCard == card.Princess {
-		return
-	}
-
-	if !deck.Empty() {
-		p.hand = deck.Draw()
-	}
-}
-
 func (p *Player) trade(opponent *Player) {
 	p.hand, opponent.hand = opponent.hand, p.hand
 }

@@ -76,8 +76,17 @@ func playPrince(self *Player, opponents []*Player, deck *deck.Deck) {
 		return
 	}
 
-	log.Printf("> %s discards %s", playerToDiscard.Name, playerToDiscard.Hand())
-	playerToDiscard.redrawHand(deck)
+	discardedCard := playerToDiscard.discardHand()
+	log.Printf("> %s discards %s", playerToDiscard.Name, discardedCard)
+	if discardedCard == card.Princess {
+		log.Printf("> %s is OUT", playerToDiscard.Name)
+		return
+	}
+
+	// TODO: pick up removed card if deck is empty
+	if !deck.Empty() {
+		playerToDiscard.hand = deck.Draw()
+	}
 }
 
 func playChancellor(self *Player, opponents []*Player, deck *deck.Deck) {
