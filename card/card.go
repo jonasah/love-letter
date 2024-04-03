@@ -38,7 +38,7 @@ func (c Card) String() string {
 		return "[OUT]"
 	}
 
-	return fmt.Sprintf("%s (%d)", cardToStringMap[c], c)
+	return fmt.Sprintf("%s(%d)", cardToStringMap[c], c)
 }
 
 func (c Card) Compare(other Card) int {

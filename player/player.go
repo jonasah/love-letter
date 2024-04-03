@@ -1,7 +1,7 @@
 package player
 
 import (
-	"fmt"
+	"log"
 	"slices"
 
 	"github.com/jonasah/love-letter/card"
@@ -49,7 +49,7 @@ func (p *Player) Play(opponents []*Player, deck *deck.Deck) {
 
 	p.pile = append(p.pile, cardToPlay)
 
-	fmt.Println(p.Name, "PLAYING", cardToPlay, "HAND", p.hand)
+	log.Printf("Plays %s", cardToPlay)
 	actionFunc := cardActions[cardToPlay]
 	if actionFunc != nil {
 		actionFunc(p, opponents, deck)
