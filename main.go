@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"slices"
+	"strings"
 
 	"github.com/jonasah/love-letter/controller"
 	"github.com/jonasah/love-letter/deck"
@@ -25,18 +26,25 @@ func main() {
 
 	tokensToWin := map[int]int{2: 6, 3: 5, 4: 4, 5: 3, 6: 3}[numPlayers]
 
-	log.Printf("Start game with %d players", len(players))
+	log.Printf("Start game with %d players. %d tokens needed to win.", len(players), tokensToWin)
 
 	for {
 		playRound(slices.Clone(players), rnd)
 
-		winnerIdx := slices.IndexFunc(players, func(p *player.Player) bool { return p.Tokens >= tokensToWin })
-		if winnerIdx != -1 {
+		gameOver := slices.ContainsFunc(players, func(p *player.Player) bool { return p.Tokens >= tokensToWin })
+		if gameOver {
 			log.Print("=== END OF GAME ===")
-			log.Printf("%s wins the game with %d tokens", players[winnerIdx].Name, players[winnerIdx].Tokens)
+			slices.SortFunc(players, func(a, b *player.Player) int { return b.Tokens - a.Tokens })
+
+			winners := filter(players, func(p *player.Player) bool { return p.Tokens == players[0].Tokens })
+			names := transform(winners, func(p *player.Player) string { return p.Name })
+			log.Printf("%s wins the game!", strings.Join(names, " and "))
+
+			log.Print("Results:")
 			for _, p := range players {
 				log.Printf("- %s: %d", p.Name, p.Tokens)
 			}
+
 			break
 		}
 	}
@@ -108,4 +116,24 @@ func playRound(players []*player.Player, shuffler deck.Shuffler) {
 	} else {
 		log.Printf("No extra token for Spy. %d players played a Spy", len(playersWithSpy))
 	}
+}
+
+func filter[T any](s []T, f func(T) bool) []T {
+	var values []T
+	for _, v := range s {
+		if f(v) {
+			values = append(values, v)
+		}
+	}
+
+	return values
+}
+
+func transform[T any, U any](s []T, f func(T) U) []U {
+	var values []U
+	for _, v := range s {
+		values = append(values, f(v))
+	}
+
+	return values
 }
