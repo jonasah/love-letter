@@ -28,25 +28,23 @@ func main() {
 
 	log.Printf("Start game with %d players. %d tokens needed to win.", len(players), tokensToWin)
 
-	for {
+	gameOver := false
+	for !gameOver {
 		playRound(slices.Clone(players), rnd)
 
-		gameOver := slices.ContainsFunc(players, func(p *player.Player) bool { return p.Tokens >= tokensToWin })
-		if gameOver {
-			log.Print("=== END OF GAME ===")
-			slices.SortFunc(players, func(a, b *player.Player) int { return b.Tokens - a.Tokens })
+		gameOver = slices.ContainsFunc(players, func(p *player.Player) bool { return p.Tokens >= tokensToWin })
+	}
 
-			winners := filter(players, func(p *player.Player) bool { return p.Tokens == players[0].Tokens })
-			names := transform(winners, func(p *player.Player) string { return p.Name })
-			log.Printf("%s wins the game!", strings.Join(names, " and "))
+	log.Print("=== END OF GAME ===")
+	slices.SortFunc(players, func(a, b *player.Player) int { return b.Tokens - a.Tokens })
 
-			log.Print("Results:")
-			for _, p := range players {
-				log.Printf("- %s: %d", p.Name, p.Tokens)
-			}
+	winners := filter(players, func(p *player.Player) bool { return p.Tokens == players[0].Tokens })
+	names := transform(winners, func(p *player.Player) string { return p.Name })
+	log.Printf("%s wins the game!", strings.Join(names, " and "))
 
-			break
-		}
+	log.Print("Results:")
+	for _, p := range players {
+		log.Printf("- %s: %d", p.Name, p.Tokens)
 	}
 }
 
