@@ -8,6 +8,7 @@ import (
 
 	"github.com/jonasah/love-letter/controller"
 	"github.com/jonasah/love-letter/deck"
+	"github.com/jonasah/love-letter/lib"
 	"github.com/jonasah/love-letter/player"
 	"github.com/jonasah/love-letter/randomizer"
 )
@@ -45,8 +46,8 @@ func main() {
 	log.Print("=== END OF GAME ===")
 	slices.SortFunc(players, func(a, b *player.Player) int { return b.Tokens - a.Tokens })
 
-	winners := filter(players, func(p *player.Player) bool { return p.Tokens == players[0].Tokens })
-	names := transform(winners, func(p *player.Player) string { return p.Name })
+	winners := lib.Filter(players, func(p *player.Player) bool { return p.Tokens == players[0].Tokens })
+	names := lib.Transform(winners, func(p *player.Player) string { return p.Name })
 	log.Printf("%s wins the game!", strings.Join(names, " and "))
 
 	log.Print("Results:")
@@ -121,24 +122,4 @@ func playRound(players []*player.Player, shuffler deck.Shuffler) *player.Player 
 	}
 
 	return players[0]
-}
-
-func filter[T any](s []T, f func(T) bool) []T {
-	var values []T
-	for _, v := range s {
-		if f(v) {
-			values = append(values, v)
-		}
-	}
-
-	return values
-}
-
-func transform[T any, U any](s []T, f func(T) U) []U {
-	var values []U
-	for _, v := range s {
-		values = append(values, f(v))
-	}
-
-	return values
 }
