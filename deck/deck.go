@@ -9,7 +9,8 @@ type Shuffler interface {
 }
 
 type Deck struct {
-	cards []card.Card
+	cards       []card.Card
+	removedCard card.Card
 }
 
 func New(shuffler Shuffler) *Deck {
@@ -22,7 +23,7 @@ func New(shuffler Shuffler) *Deck {
 
 	shuffler.Shuffle(cards)
 
-	return &Deck{cards}
+	return &Deck{cards: cards, removedCard: -1}
 }
 
 func (d *Deck) Empty() bool {
@@ -37,6 +38,14 @@ func (d *Deck) Draw() card.Card {
 
 func (d *Deck) Append(cards []card.Card) {
 	d.cards = append(d.cards, cards...)
+}
+
+func (d *Deck) RemoveCard() {
+	d.removedCard = d.Draw()
+}
+
+func (d *Deck) RemovedCard() card.Card {
+	return d.removedCard
 }
 
 var cardCount = map[card.Card]int{

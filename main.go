@@ -60,7 +60,7 @@ func playRound(players []*player.Player, shuffler deck.Shuffler) *player.Player 
 	log.Print("=== START ROUND ===")
 
 	deck := deck.New(shuffler)
-	removedCard := deck.Draw()
+	deck.RemoveCard()
 
 	for _, p := range players {
 		p.Deal(deck.Draw())
@@ -77,7 +77,7 @@ func playRound(players []*player.Player, shuffler deck.Shuffler) *player.Player 
 
 	log.Print("--- End of round ---")
 
-	log.Printf("Removed card: %s", removedCard)
+	log.Printf("Removed card: %s", deck.RemovedCard())
 
 	if len(players) == 1 {
 		log.Printf("%s wins the round as the last player standing", players[0].Name)

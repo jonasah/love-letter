@@ -83,10 +83,14 @@ func playPrince(self *Player, opponents []*Player, deck *deck.Deck) {
 		return
 	}
 
-	// TODO: pick up removed card if deck is empty
-	if !deck.Empty() {
-		playerToDiscard.hand = deck.Draw()
+	if deck.Empty() {
+		log.Printf("> Deck is empty, %s draws removed card", playerToDiscard.Name)
+		playerToDiscard.hand = deck.RemovedCard()
+		return
 	}
+
+	log.Printf("> %s draws a card from the deck", playerToDiscard.Name)
+	playerToDiscard.hand = deck.Draw()
 }
 
 func playChancellor(self *Player, opponents []*Player, deck *deck.Deck) {
