@@ -62,6 +62,11 @@ func playRound(players []*player.Player, shuffler deck.Shuffler) *player.Player 
 	deck := deck.New(shuffler)
 	deck.RemoveCard()
 
+	if len(players) == 2 {
+		c1, c2, c3 := deck.Draw(), deck.Draw(), deck.Draw()
+		log.Printf("Set aside cards: %s, %s, %s", c1, c2, c3)
+	}
+
 	for _, p := range players {
 		p.Deal(deck.Draw())
 	}
