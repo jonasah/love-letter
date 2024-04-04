@@ -37,7 +37,7 @@ func playGuard(self *Player, opponents []*Player, deck *deck.Deck) {
 }
 
 func playPriest(self *Player, opponents []*Player, deck *deck.Deck) {
-	opponent := self.controller.SelectPlayer(card.Priest, opponents)
+	opponent := self.controller.SelectOpponentForEffect(card.Priest, opponents)
 
 	if opponent.IsProtected() {
 		log.Printf("> No effect, %s is protected", opponent.Name)
@@ -49,7 +49,7 @@ func playPriest(self *Player, opponents []*Player, deck *deck.Deck) {
 }
 
 func playBaron(self *Player, opponents []*Player, deck *deck.Deck) {
-	opponent := self.controller.SelectPlayer(card.Baron, opponents)
+	opponent := self.controller.SelectOpponentForEffect(card.Baron, opponents)
 
 	if opponent.IsProtected() {
 		log.Printf("> No effect, %s is protected", opponent.Name)
@@ -107,7 +107,7 @@ func playChancellor(self *Player, opponents []*Player, deck *deck.Deck) {
 }
 
 func playKing(self *Player, opponents []*Player, deck *deck.Deck) {
-	opponent := self.controller.SelectPlayer(card.King, opponents)
+	opponent := self.controller.SelectOpponentForEffect(card.King, opponents)
 
 	if opponent.IsProtected() {
 		log.Printf("> No effect, %s is protected", opponent.Name)

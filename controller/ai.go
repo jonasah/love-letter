@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/jonasah/love-letter/card"
+	"github.com/jonasah/love-letter/lib"
 	"github.com/jonasah/love-letter/player"
 )
 
@@ -44,35 +45,39 @@ func (a ai) SelectCardToPlay(card1, card2 card.Card) (card.Card, card.Card) {
 }
 
 func (a ai) GuessCard(opponents []*player.Player) (*player.Player, card.Card) {
-	// TODO: do not guess on protected opponent
-	opponent := opponents[a.randomizer.Intn(len(opponents))]
+	selected := a.selectUnprotectedOpponent(opponents)
+	if selected == nil {
+		return opponents[0], -1 // guess doesn't matter
+	}
 
 	guess := a.randomizer.Card()
 	for guess == card.Guard {
 		guess = a.randomizer.Card()
 	}
 
-	return opponent, guess
+	return selected, guess
 }
 
-func (a ai) SelectPlayer(card card.Card, opponents []*player.Player) *player.Player {
-	// TODO: do not guess on protected opponent
-	opponent := opponents[a.randomizer.Intn(len(opponents))]
-	return opponent
+func (a ai) SelectOpponentForEffect(card card.Card, opponents []*player.Player) *player.Player {
+	selected := a.selectUnprotectedOpponent(opponents)
+	if selected == nil {
+		return opponents[0]
+	}
+
+	return selected
 }
 
 func (a ai) LookAt(card card.Card) {}
 
 func (a ai) SelectPlayerToRedraw(self *player.Player, opponents []*player.Player) *player.Player {
-	// TODO: do not guess on protected opponent
-	opponent := opponents[a.randomizer.Intn(len(opponents))]
-
-	if opponent.IsProtected() {
+	selected := a.selectUnprotectedOpponent(opponents)
+	if selected == nil {
+		// must select self if all opponents are protected
 		return self
 	}
 
 	if a.randomizer.Bool() {
-		return opponent
+		return selected
 	}
 
 	return self
@@ -83,6 +88,16 @@ func (a ai) SelectCardToKeep(card1 card.Card, rest ...card.Card) (card.Card, []c
 	a.randomizer.Shuffle(cards)
 
 	return cards[0], cards[1:]
+}
+
+func (a ai) selectUnprotectedOpponent(opponents []*player.Player) *player.Player {
+	selectable := lib.Filter(opponents, func(p *player.Player) bool { return !p.IsProtected() })
+	if len(selectable) == 0 {
+		// all opponents are protected
+		return nil
+	}
+
+	return selectable[a.randomizer.Intn(len(selectable))]
 }
 
 func sort(c1, c2 card.Card) (card.Card, card.Card) {

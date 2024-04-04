@@ -15,7 +15,7 @@ type Controller interface {
 	GuessCard(opponents []*Player) (*Player, card.Card)
 
 	// Priest, Baron, King
-	SelectPlayer(card card.Card, opponents []*Player) *Player
+	SelectOpponentForEffect(card card.Card, opponents []*Player) *Player
 
 	// Priest
 	LookAt(card card.Card)
