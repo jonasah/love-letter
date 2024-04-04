@@ -76,6 +76,11 @@ func (a ai) SelectPlayerToRedraw(self *player.Player, opponents []*player.Player
 		return self
 	}
 
+	// never select self if hand is princess
+	if self.Hand() == card.Princess {
+		return selected
+	}
+
 	if a.randomizer.Bool() {
 		return selected
 	}
