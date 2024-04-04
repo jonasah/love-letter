@@ -28,11 +28,18 @@ func main() {
 
 	log.Printf("Start game with %d players. %d tokens needed to win.", len(players), tokensToWin)
 
-	gameOver := false
-	for !gameOver {
-		playRound(slices.Clone(players), rnd)
+	for {
+		winner := playRound(slices.Clone(players), rnd)
 
-		gameOver = slices.ContainsFunc(players, func(p *player.Player) bool { return p.Tokens >= tokensToWin })
+		gameOver := slices.ContainsFunc(players, func(p *player.Player) bool { return p.Tokens >= tokensToWin })
+		if gameOver {
+			break
+		}
+
+		// winner starts next round
+		for players[0] != winner {
+			players = append(players[1:], players[0])
+		}
 	}
 
 	log.Print("=== END OF GAME ===")
@@ -48,7 +55,7 @@ func main() {
 	}
 }
 
-func playRound(players []*player.Player, shuffler deck.Shuffler) {
+func playRound(players []*player.Player, shuffler deck.Shuffler) *player.Player {
 	log.Print("=== START ROUND ===")
 
 	deck := deck.New(shuffler)
@@ -57,8 +64,6 @@ func playRound(players []*player.Player, shuffler deck.Shuffler) {
 	for _, p := range players {
 		p.Deal(deck.Draw())
 	}
-
-	// TODO: winner of last round begins
 
 	for !deck.Empty() && len(players) > 1 {
 		log.Printf("-- %s's turn --", players[0].Name)
@@ -82,7 +87,7 @@ func playRound(players []*player.Player, shuffler deck.Shuffler) {
 			players[0].Tokens++
 		}
 
-		return
+		return players[0]
 	}
 
 	slices.SortFunc(players, func(a, b *player.Player) int { return -a.Hand().Compare(b.Hand()) })
@@ -114,6 +119,8 @@ func playRound(players []*player.Player, shuffler deck.Shuffler) {
 	} else {
 		log.Printf("No extra token for Spy. %d players played a Spy", len(playersWithSpy))
 	}
+
+	return players[0]
 }
 
 func filter[T any](s []T, f func(T) bool) []T {
