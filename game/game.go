@@ -82,47 +82,35 @@ func playRound(players []*player.Player, shuffler deck.Shuffler) *player.Player 
 
 	log.Printf("Removed card: %s", deck.RemovedCard())
 
-	if len(players) == 1 {
-		log.Printf("%s wins the round as the last player standing", players[0].Name)
-		players[0].Tokens++
+	return assignTokens(players)
+}
 
-		if players[0].PlayedSpy() {
-			log.Print("Extra token awarded for Spy")
-			players[0].Tokens++
-		}
+func assignTokens(players []*player.Player) *player.Player {
+	// sort remaining players by highest card
+	slices.SortFunc(players, func(a, b *player.Player) int { return b.Hand().Compare(a.Hand()) })
 
-		return players[0]
-	}
-
-	slices.SortFunc(players, func(a, b *player.Player) int { return -a.Hand().Compare(b.Hand()) })
-
-	log.Printf("Deck is empty, %d players left:", len(players))
-	for _, p := range players {
-		log.Printf("- %s: %s", p.Name, p.Hand())
-	}
-
-	if players[0].Hand() > players[1].Hand() {
-		log.Printf("%s wins the round with the highest card", players[0].Name)
-		players[0].Tokens++
-	} else if players[0].Hand() == players[1].Hand() {
-		log.Printf("%s and %s tie the round with the highest card", players[0].Name, players[1].Name)
-		players[0].Tokens++
-		players[1].Tokens++
-	}
-
-	var playersWithSpy []*player.Player
+	log.Printf("%d player(s) left:", len(players))
 	for _, p := range players {
 		if p.PlayedSpy() {
-			playersWithSpy = append(playersWithSpy, p)
+			log.Printf("- %s: %s [Spy]", p.Name, p.Hand())
+		} else {
+			log.Printf("- %s: %s", p.Name, p.Hand())
 		}
 	}
 
-	if len(playersWithSpy) == 1 {
-		log.Printf("%s is awarded an extra token for Spy", playersWithSpy[0].Name)
-		playersWithSpy[0].Tokens++
-	} else {
-		log.Printf("No extra token for Spy. %d players played a Spy", len(playersWithSpy))
+	winners := lib.Filter(players, func(p *player.Player) bool { return p.Hand() == players[0].Hand() })
+	names := lib.Transform(winners, func(p *player.Player) string { return p.Name })
+	log.Printf("%s wins the round!", strings.Join(names, " and "))
+
+	for _, w := range winners {
+		w.Tokens++
 	}
 
-	return players[0]
+	spies := lib.Filter(players, func(p *player.Player) bool { return p.PlayedSpy() })
+	if len(spies) == 1 {
+		log.Printf("%s is awarded an extra token for Spy", spies[0].Name)
+		spies[0].Tokens++
+	}
+
+	return winners[0]
 }
